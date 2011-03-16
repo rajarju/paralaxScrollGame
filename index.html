@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Parallax Test</title>
+        <style>
+            #player{
+                background: url("images/player.png") no-repeat scroll 0 0 transparent;
+                height: 40px;
+                width: 35px;
+                position: absolute;
+                display: block;
+                z-index: 13;
+            }
+            #playground{
+                background: none repeat scroll 0 0 black;
+                display: block;
+                height: 332px;
+                width: 500px;
+                margin: 0 auto;
+            }
+            #background-0{
+                background: url("images/background0.png") repeat scroll 0 0 transparent;
+                display: block;
+                height: 230px;
+                position: absolute;
+                width: 500px;
+                z-index: 10;
+            }
+            #background-1{
+                background: url("images/background1.png") repeat-x scroll 0 48px transparent;
+                display: block;
+                height: 332px;
+                position: absolute;
+                width: 500px;
+                z-index: 11;
+            }
+            #background-2{
+                background: url("images/background2.png") repeat-x scroll 0 38px transparent;
+                display: block;
+                height: 331px;
+                position: absolute;
+                width: 500px;
+                z-index: 12;
+            }
+        </style>
+        <script src='jquery.js' type='text/javascript'></script>
+        <script src='parralaxScroll.js' type='text/javascript'></script>
+
+    </head>
+    <body>
+        <div id="container">
+        <h2>Parallax Engine Test</h2>
+        <div id='playground'>
+            <p>Are you Using IE?</p>
+        </div>
+        </div>
+
+    </body>
+</html>
