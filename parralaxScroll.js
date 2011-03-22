@@ -2,23 +2,18 @@
 // @author Arjun
 // @file Library for multi layer parrelax scrolls
 
+/**********************************HELPER FUNCTIONS***********************************/
+//Helper to remove item from arrays
 item_remove = function(array, from, to) {
   var rest = array.slice((to || from) + 1 || array.length);
   array.length = from < 0 ? array.length + from : from;
   return array.push.apply(array, rest);
 };
-//Globals
-var level = null;
-var missiles = [];
-
-var enemies = {
-  maxInPage: 1,
-  total: 20,
-  dead: 0,
-  onscreen: 0,
-  enemy: []
-};
-
+//Random Number Generator
+function rand(l,u){
+  return Math.floor((Math.random() * (u-l+1))+l);
+}
+//Request animation Frame
 window.requestAnimationFrame = (function(){
   //Check for each browser
   //@paul_irish function
@@ -35,9 +30,20 @@ window.requestAnimationFrame = (function(){
 })();
 
 
-/**
- * Preloads
- */
+/****************************************Globals*****************************/
+var level = null;
+var missiles = [];
+
+var enemies = {
+  maxInPage: 1,
+  total: 20,
+  dead: 0,
+  onscreen: 0,
+  enemy: []
+};
+
+/***************************************** MEDIA TO BE PRELOADED ******************/
+//TODO: Add Sounds
 var sprites = {
   status : 0,
   progress: 0,
@@ -60,7 +66,6 @@ var sprites = {
   }
   ]
 };
-
 /**
 * Preloader Function
 */
@@ -82,9 +87,6 @@ function preloadSprites(data){
   });
   
 }
-
-
-
 /**
 * Increment background pos by amount for the given element.
 */
@@ -100,7 +102,7 @@ function updateBackground(element, xInc, yInc){
   $(element).css('background-position', xPos+"px "+yPos+"px");
 }
 
-
+//Get Background Positions of an element
 function getBackground(element){
   var bckPosRaw = $(element).css('background-position');
   bckPosRaw = bckPosRaw.split(" ");
@@ -111,13 +113,11 @@ function getBackground(element){
     y: yPos
   };
 }
-
-
+//Set Background pos of an element
 function setBackground(element, x, y){
   $(element).css('background-position', x+"px "+y+"px");
 }
-
-
+/********************************* CLASSES ****************************/
 //The Game Object
 var game = function(){
   this.gameOver = false;
@@ -163,7 +163,7 @@ var game = function(){
 
 //Player Object
 var player = function(){
-
+  this.score = 0;
   this.speedX = 2;
   this.speedY = 3;
   this.move = null;
@@ -228,6 +228,7 @@ var player = function(){
     this.top -= 10;
     this.left -= 10;
     this.posPlayer();
+    
   }
 }
 
@@ -235,8 +236,9 @@ var player = function(){
 //Dont have time
 var enemy = function(type){
 
+  this.points = 25;
   this.type = type;
-  this.speed = -2;
+  this.speed = rand(-5, -2);
   this.live = false;
   this.id = 'enemy_'+this.type+ '_' + level.distance;
     
@@ -255,7 +257,7 @@ var enemy = function(type){
     this.pos.top -= 10;
     this.pos.left -= 10;
     $('#'+this.id).addClass('explode');
-    this.draw();
+    this.draw();    
   }
 
   this.draw = function(){
@@ -316,14 +318,17 @@ var missile = function(type){
   }
 }
 
+/*****************************************MAIN FUNCTION CYCLE***********************************/
 
-//on load
+//on load Event bind
 window.onload = function(){
   preloadSprites(sprites.preloads);
   load();
 
 };
-
+//Sprites load loop
+//Waits for all the sprites to be loaded before starting the game..
+//TODO: Make sure it this works
 var load = function(){
   console.log(sprites.progress);
   if(sprites.progress == sprites.preloads.length)
@@ -332,19 +337,19 @@ var load = function(){
     setTimeout('load()',1000);
 }
 
-
+//Initialize Game Levels and Players
 var init = function(){
 
- 
-
+  //Create Level
   level = new game();
   level.init();
 
+  //Create Player
   player1 = new player();
   player1.init();
 
+  //Binding User behaviors
   window.onkeydown = function(e){
-
     switch(e.keyCode){
       case 38:
         player1.move = 'up';
@@ -379,8 +384,7 @@ var init = function(){
   run();
 }
 
-
-
+//Main Game Loop
 var run = function(){
   if(level){
 
@@ -417,7 +421,8 @@ var run = function(){
           setTimeout(function(){
             level.gameOver = true;
             $('.explode').hide();
-          }, 700);
+            enemies.onscreen--;
+          }, 500);
 
         }
         else{
@@ -451,21 +456,20 @@ var run = function(){
                 Math.pow((enemies.enemy[j].pos.top - missiles[i].pos.top), 2)
                 ));
             if(dist < 30){
-
+              player1.score += enemies.enemy[j].points;
               //Explode the Enemy
-              enemies.enemy[i].explode();
+              enemies.enemy[j].explode();
               setTimeout(function(){
                 $('.explode').hide();
-              }, 700);
+                enemies.onscreen--;
+              }, 500);
               //Remove Missile
               $("#"+missiles[i].id).remove();
               item_remove(missiles, i, 1);
+              item_remove(enemies.enemy, j, 1);
+              
             }
           }
-
-
-
-
         }
       }
     }
@@ -485,7 +489,8 @@ var run = function(){
       });
 
     level.distance++;
-        
+        $('#dist span').text(level.distance);
+        $('#score span').text(player1.distance);
   }
   else{
     //console.log('Game error')
@@ -493,9 +498,3 @@ var run = function(){
   }
 }
 
-
-//Random Number Generator
-function rand(l,u) 
-{
-  return Math.floor((Math.random() * (u-l+1))+l);
-}

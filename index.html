@@ -14,7 +14,6 @@
       #buffer{
         display: none;
       }
-
       #player{
         background: url("images/player.png") no-repeat scroll 0 0 transparent;
         height: 40px;
@@ -23,8 +22,6 @@
         display: block;
         z-index: 20;
       }
-
-
       .explode{
         background: url("images/explode.gif") no-repeat scroll -1px 1px transparent !important;
         height: 78px !important;
@@ -80,6 +77,23 @@
         display: none;
         z-index: 30;
       }
+      #hud{
+        height: 25px;
+        width: 500px;
+        margin:  auto;
+      }
+      #dist{
+        height: 15px;
+        color: #fff;
+        padding: 5px 4px;
+        float: left;
+      }
+      #score{
+        height: 15px;
+        color: #fff;
+        padding: 5px 4px;
+        float: right;
+      }
     </style>
     <script src='jquery.js' type='text/javascript'></script>
     <script src='parralaxScroll.js' type='text/javascript'></script>
@@ -90,6 +104,10 @@
       <h2>Parallax Engine Test</h2>
       <div id='playground'>
         <p>Are you Using IE?</p>
+      </div>
+      <div id="hud">
+        <div id="dist">Distance :<span></span></div>
+        <div id="score">Score :<span></span></div>
       </div>
     </div>
     <div id="buffer"> </div>
