@@ -32,6 +32,7 @@ window.requestAnimationFrame = (function(){
 
 /****************************************Globals*****************************/
 var level = null;
+var player1 = null;
 var missiles = [];
 
 var enemies = {
@@ -48,6 +49,50 @@ var sprites = {
   status : 0,
   progress: 0,
   preloads: [  
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
+  {
+    type: 'img',
+    src: 'images/background0.png'
+  },
   {
     type: 'img',
     src: 'images/background0.png'
@@ -74,14 +119,7 @@ function preloadSprites(data){
   $(data).each(function(i,j){
     switch(j.type){
       case 'img':
-        console.log(j.src + 'started');
-        $.ajax({
-          src : j.src,
-          complete : function(data){
-            console.log(j.src + 'done');
-            sprites.progress++;
-          }
-        })
+        
         break;
     }
   });
@@ -324,17 +362,22 @@ var missile = function(type){
 window.onload = function(){
   preloadSprites(sprites.preloads);
   load();
-
+  
 };
 //Sprites load loop
 //Waits for all the sprites to be loaded before starting the game..
 //TODO: Make sure it this works
-var load = function(){
-  console.log(sprites.progress);
-  if(sprites.progress == sprites.preloads.length)
+var load = function(){  
+  loadingBar.progress = parseInt((sprites.progress/sprites.preloads.length)*100);
+  console.log(loadingBar.progress);
+  loadingBar.show();
+  if(sprites.progress == sprites.preloads.length){    
+    loadingBar.hide();
     init();
-  else
-    setTimeout('load()',1000);
+  }
+  else{
+    setTimeout('load()',500);
+  }
 }
 
 //Initialize Game Levels and Players
@@ -489,8 +532,8 @@ var run = function(){
       });
 
     level.distance++;
-        $('#dist span').text(level.distance);
-        $('#score span').text(player1.distance);
+    $('#dist span').text(level.distance);
+    $('#score span').text(player1.distance);
   }
   else{
     //console.log('Game error')
@@ -498,3 +541,20 @@ var run = function(){
   }
 }
 
+
+
+/**
+ * Loading Bar Function
+ * increments to add for each call
+ * minimum to start with
+ * max to end with
+ */
+var loadingBar = {
+  progress: 0,
+  show: function(){
+    $('#bar #progress').width(loadingBar.progress + '%');
+  },
+  hide: function(){
+  //$('#playground').html('');
+  }
+}
