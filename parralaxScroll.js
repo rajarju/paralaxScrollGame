@@ -48,86 +48,67 @@ var enemies = {
 var sprites = {
   status : 0,
   progress: 0,
-  preloads: [  
+  preloads: [    
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/background0.png',
+    message: 'Sky'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/background1.png',
+    message: 'Forest'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/background2.png',
+    message: 'Trees'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/player.png',
+    message: 'Player Ship'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/enemy.png',
+    message: 'Enemy Ships'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/explode.gif',
+    message: 'Animations'
   },
   {
     type: 'img',
-    src: 'images/background0.png'
+    src: 'images/bullet1.png',
+    message: 'Weapons'
   },
-  {
-    type: 'img',
-    src: 'images/background0.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background0.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background0.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background0.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background0.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background1.png'
-  },
-  {
-    type: 'img',
-    src: 'images/background2.png'
-  },
-  {
-    type: 'img',
-    src: 'images/player.png'
-  }
   ]
 };
 /**
-* Preloader Function
-*/
+ * Preloader Function
+ */
 function preloadSprites(data){
 
   $(data).each(function(i,j){
     switch(j.type){
       case 'img':
-        
+        var img = $('<img />').attr('src', j.src).load(function(){
+          //console.log($(this));
+          //console.log(sprites.progress++);
+          $('#loading #debug').prepend("Loading "+j.message +"...<br/>");
+          sprites.progress++;
+        });
+        $('#buffer').append(img);
         break;
     }
   });
   
 }
 /**
-* Increment background pos by amount for the given element.
-*/
+ * Increment background pos by amount for the given element.
+ */
 function updateBackground(element, xInc, yInc){
   var bckPosRaw = $(element).css('background-position');
   bckPosRaw = bckPosRaw.split(" ");
@@ -360,8 +341,13 @@ var missile = function(type){
 
 //on load Event bind
 window.onload = function(){
-  preloadSprites(sprites.preloads);
-  load();
+  $('#start').click(function(){
+    $('#welcome').hide();
+    $('#playground').show();
+    preloadSprites(sprites.preloads);
+    load();
+  })
+
   
 };
 //Sprites load loop
@@ -372,7 +358,11 @@ var load = function(){
   console.log(loadingBar.progress);
   loadingBar.show();
   if(sprites.progress == sprites.preloads.length){    
+    //Remove Loading Bar
     loadingBar.hide();
+    //Show the HUD
+    $('#hud').show();
+    //Build Level
     init();
   }
   else{
@@ -551,8 +541,10 @@ var run = function(){
  */
 var loadingBar = {
   progress: 0,
-  show: function(){
-    $('#bar #progress').width(loadingBar.progress + '%');
+  show: function(){    
+    $('#bar #progress').animate({
+      'width' : loadingBar.progress + '%'
+    },100);
   },
   hide: function(){
   //$('#playground').html('');

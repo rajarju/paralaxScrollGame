@@ -40,9 +40,9 @@
         z-index: 20;
       }
 
-      #playground{
+      #playground, #welcome{
         background: none repeat scroll 0 0 black;
-        display: block;
+        display: none;
         height: 332px;
         width: 500px;
         margin: 0 auto;
@@ -83,6 +83,7 @@
         height: 25px;
         width: 500px;
         margin:  auto;
+        display: none;
       }
       #dist{
         height: 15px;
@@ -112,6 +113,27 @@
         height: 100%;
         width: 0%;
       }
+      #debug{
+        margin: 0 auto;
+        color: #fff;
+        height: 200px;        
+        overflow: auto;
+        text-align: left;
+        font-family: 'Arial';
+        font-size: 10px;
+        width: 70%;
+
+      }
+      #welcome{
+        display: block;
+        text-align: center;
+        padding:  44px 0 0 0;
+      }
+      #welcome #start{
+        text-align: center;
+        color: #fff;
+        cursor: pointer;
+      }
     </style>
     <script src='jquery.js' type='text/javascript'></script>
     <script src='parralaxScroll.js' type='text/javascript'></script>
@@ -120,12 +142,16 @@
   <body>
     <div id="container">
       <h2>Parallax Engine Test</h2>
+      <div id="welcome">
+        <a id="start">Click Here to Start</a>
+      </div>
       <div id='playground'>
         <div id="loading">
           <p>LOADING!!</p>
           <div id="bar">
             <div id="progress"></div>
           </div>
+          <div id="debug"></div>
         </div>
       </div>
       <div id="hud">
