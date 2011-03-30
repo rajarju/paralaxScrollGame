@@ -94,10 +94,10 @@ function preloadSprites(data){
   $(data).each(function(i,j){
     switch(j.type){
       case 'img':
+        $('#loading #debug').prepend("Loading "+j.message +"...<br/>");
         var img = $('<img />').attr('src', j.src).load(function(){
           //console.log($(this));
-          //console.log(sprites.progress++);
-          $('#loading #debug').prepend("Loading "+j.message +"...<br/>");
+          //console.log(sprites.progress++);          
           sprites.progress++;
         });
         $('#buffer').append(img);
@@ -363,7 +363,7 @@ var load = function(){
     //Show the HUD
     $('#hud').show();
     //Build Level
-    init();
+    //init();
   }
   else{
     setTimeout('load()',500);
@@ -523,7 +523,7 @@ var run = function(){
 
     level.distance++;
     $('#dist span').text(level.distance);
-    $('#score span').text(player1.distance);
+    $('#score span').text(player1.score);
   }
   else{
     //console.log('Game error')
@@ -544,7 +544,7 @@ var loadingBar = {
   show: function(){    
     $('#bar #progress').animate({
       'width' : loadingBar.progress + '%'
-    },100);
+    },200);
   },
   hide: function(){
   //$('#playground').html('');
