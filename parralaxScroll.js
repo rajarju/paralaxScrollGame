@@ -34,7 +34,7 @@ window.requestAnimationFrame = (function(){
 var level = null;
 var player1 = null;
 var missiles = [];
-
+var loadingTimer = null;
 var enemies = {
   maxInPage: 1,
   total: 20,
@@ -42,6 +42,21 @@ var enemies = {
   onscreen: 0,
   enemy: []
 };
+
+function resetPlayers(){
+  level = null;
+  player1 = null;
+  missiles = [];
+
+  enemies = {
+    maxInPage: 1,
+    total: 20,
+    dead: 0,
+    onscreen: 0,
+    enemy: []
+  };
+}
+
 
 /***************************************** MEDIA TO BE PRELOADED ******************/
 //TODO: Add Sounds
@@ -94,10 +109,10 @@ function preloadSprites(data){
   $(data).each(function(i,j){
     switch(j.type){
       case 'img':
-        $('#loading #debug').prepend("Loading "+j.message +"...<br/>");
         var img = $('<img />').attr('src', j.src).load(function(){
           //console.log($(this));
-          //console.log(sprites.progress++);          
+          //console.log(sprites.progress++);
+          $('#loading #debug').prepend("Loaded "+j.message +"...<br/>");
           sprites.progress++;
         });
         $('#buffer').append(img);
@@ -302,8 +317,8 @@ var enemy = function(type){
 //Missile Object
 var missile = function(type){
   this.type = type;
-  this.id = "missile_"+missiles.length;
-
+  //this.id = "missile_"+missiles.length;
+  this.id = "missile_"+ new Date().getTime(); 
   this.playground = document.getElementById('playground');
   this.missile = document.createElement('div');
   this.missile.id = this.id;
@@ -335,13 +350,31 @@ var missile = function(type){
     }).show();
 
   }
+  this.explode = function(){
+    $(this.missile).remove();
+  }
 }
+
+
+
+/**
+ * end game
+ */
+var endGame = function(){
+    
+  $('#playground').fadeOut().hide();
+  $('#welcome #status').html('Game Over!!!');
+  $('#welcome').show();
+    
+}
+
 
 /*****************************************MAIN FUNCTION CYCLE***********************************/
 
 //on load Event bind
 window.onload = function(){
   $('#start').click(function(){
+    resetPlayers();
     $('#welcome').hide();
     $('#playground').show();
     preloadSprites(sprites.preloads);
@@ -359,14 +392,15 @@ var load = function(){
   loadingBar.show();
   if(sprites.progress == sprites.preloads.length){    
     //Remove Loading Bar
+    clearTimeout(loadingTimer);
     loadingBar.hide();
     //Show the HUD
     $('#hud').show();
     //Build Level
-    //init();
+    init();
   }
   else{
-    setTimeout('load()',500);
+    loadingTimer =  setTimeout('load()',500);
   }
 }
 
@@ -382,6 +416,7 @@ var init = function(){
   player1.init();
 
   //Binding User behaviors
+  //window.onkeydown = function(e){
   window.onkeydown = function(e){
     switch(e.keyCode){
       case 38:
@@ -395,7 +430,7 @@ var init = function(){
       case 32:
         //player1.shoot = true;
         e.preventDefault();
-        player1.shootem()
+        player1.shootem();
         break;
     }
 
@@ -411,6 +446,8 @@ var init = function(){
         break;
       case 32:
         //player1.shoot = false;
+        //e.preventDefault();
+        //player1.shootem();
         break;
     }
   }
@@ -442,19 +479,26 @@ var run = function(){
         else if(
           (enemies.enemy[i].pos.left < ($('#player').offset().left + $('#player').width())) &&
           (
-            (enemies.enemy[i].pos.top + 20) > $('#player').offset().top - 40 &&
-            (enemies.enemy[i].pos.top + 20) < $('#player').offset().top + 40
+            //(enemies.enemy[i].pos.top + 20) > $('#player').offset().top - 36 &&
+            //(enemies.enemy[i].pos.top + 20) < $('#player').offset().top + 40
+            Math.abs(
+              (enemies.enemy[i].pos.top + ($('.enemy_ship').height())/2) -
+              ($('#player').offset().top + ($('#player').height())/2)
+              )
+            < 36
             )
           )
           {
           //console.log('Boom');
+          //level.gameOver = true;
+          //return;
           player1.explode();
           enemies.enemy[i].explode();
-
+          enemies.onscreen--;
           setTimeout(function(){
             level.gameOver = true;
-            $('.explode').hide();
-            enemies.onscreen--;
+            $('.explode').hide();            
+            endGame();
           }, 500);
 
         }
@@ -471,7 +515,7 @@ var run = function(){
     for(i in missiles){
       if(missiles[i] != undefined){
         if(missiles[i].pos.left > ($(level.playground).offset().left + $(level.playground).width()-30)){
-          $("#"+missiles[i].id).remove();
+          console.log($("#"+missiles[i].id).hide().remove());          
           item_remove(missiles, i, 1);
         }
         else{
@@ -526,8 +570,7 @@ var run = function(){
     $('#score span').text(player1.score);
   }
   else{
-    //console.log('Game error')
-    alert('Fcuk!! Ur still using IE?');
+    console.log('Game error');
   }
 }
 

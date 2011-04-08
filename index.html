@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Parallax Test</title>
+    <title>Aztecs and Aliens</title>
     <style>
       body{
         background-color: #000;
@@ -128,10 +128,18 @@
         display: block;
         text-align: center;
         padding:  44px 0 0 0;
+        color: #fff;
+      }
+      #welcome h4{
+        font-size: 25px;
+      }
+      #welcome #status{
+        color: red;
+        font-size: 22px;
       }
       #welcome #start{
         text-align: center;
-        color: #fff;
+
         cursor: pointer;
       }
     </style>
@@ -140,9 +148,10 @@
 
   </head>
   <body>
-    <div id="container">
-      <h2>Parallax Engine Test</h2>
+    <div id="container">      
       <div id="welcome">
+        <h4>Aztecs and Aliens</h4>
+        <p id="status"></p>
         <a id="start">Click Here to Start</a>
       </div>
       <div id='playground'>
