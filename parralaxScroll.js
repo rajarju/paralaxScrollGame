@@ -211,7 +211,7 @@ var player = function(){
     this.player.id = 'player';
     this.playground.appendChild(this.player);
 
-    this.player = $('player');
+    this.player = document.getElementById('player');
     this.resetPos();
   //console.log(this);
   };
@@ -224,7 +224,7 @@ var player = function(){
     }
     if(this.move == 'down'){
            
-      if(this.top < ($(this.playground).height() - $("#player").height())){
+      if(this.top < ($(this.playground).height() - $(player1.player).height())){
         this.top += this.speedX ;
       //this.posPlayer();
       }
@@ -243,22 +243,23 @@ var player = function(){
   };
   this.posPlayer = function(){
 
-    var offset = $("#playground").offset();
+    //var offset = $("#playground").offset();
+    var offset = $(level.playground).offset();
 
-    $("#player").css({
+    $(player1.player).css({
       top: (this.top + offset.top) + "px",
       left: (this.left + offset.left) + "px"
     });
         
   };
   this.shootem = function(){
-    //if(missiles.length < 10)
-    missiles.push(new missile('bullet'));
+    if(missiles.length < 1)
+      missiles.push(new missile('bullet'));
   //console.log(missiles);
   }
 
   this.explode = function(){
-    $("#player").addClass('explode');
+    $(player1.player).addClass('explode');
     this.top -= 10;
     this.left -= 10;
     this.posPlayer();
@@ -281,16 +282,22 @@ var enemy = function(type){
   this.enemy.id = this.id;
   this.enemy.className = 'enemy_'+this.type;
   this.playground.appendChild(this.enemy);
+  this.enemy = document.getElementById(this.id);
   //Initial POS
+//  this.pos = {
+//    top: rand($('#playground').offset().top, $('#playground').offset().top + $('#playground').height() - 40),
+//    left: $('#playground').offset().left + $('#playground').width() - 30
+//  };
   this.pos = {
-    top: rand($('#playground').offset().top, $('#playground').offset().top + $('#playground').height() - 40),
-    left: $('#playground').offset().left + $('#playground').width() - 30
+    top: rand($(this.playground).offset().top, $(this.playground).offset().top + $(this.playground).height() - 40),
+    left: $(this.playground).offset().left + $(this.playground).width() - 30
   };
 
   this.explode = function(){
     this.pos.top -= 10;
     this.pos.left -= 10;
-    $('#'+this.id).addClass('explode');
+    //$('#'+this.id).addClass('explode');
+    $(this.enemy).addClass('explode');
     this.draw();    
   }
 
@@ -299,14 +306,20 @@ var enemy = function(type){
 
     //var offset = $("#playground").offset();
 
-    $("#"+this.id).css({
+//    $("#"+this.id).css({
+//      top: (this.pos.top) + "px",
+//      left: (this.pos.left) + "px"
+//    });
+
+    $(this.enemy).css({
       top: (this.pos.top) + "px",
       left: (this.pos.left) + "px"
     });
     this.live = true;
   //console.log(this);
 
-  }
+  };
+
   this.draw();
   this.live = true;
   enemies.onscreen++;
@@ -338,20 +351,31 @@ var missile = function(type){
     }
   }
   this.pos = {
-    top: $('#player').offset().top + 13,
-    left: $('#player').offset().left + 20
+    //top: $('#player').offset().top + 13,
+    //left: $('#player').offset().left + 20
+    top: $(player1.player).offset().top + 13,
+    left: $(player1.player).offset().left + 20
   };
 
   this.draw = function(){
     //Check if its already there on screen
-    $("#"+this.id).css({
+//    $("#"+this.id).css({
+//      top: (this.pos.top) + "px",
+//      left: (this.pos.left) + "px"
+//    }).show();
+    $(this.missile).css({
       top: (this.pos.top) + "px",
       left: (this.pos.left) + "px"
     }).show();
 
   }
-  this.explode = function(){
+ 
+  this.remove = function(){
+    //console.log(this);
+    //$("#" + this.missile.id).remove();
+    //$("#" + this.missile.id).remove();
     $(this.missile).remove();
+    
   }
 }
 
@@ -363,6 +387,7 @@ var missile = function(type){
 var endGame = function(){
     
   $('#playground').fadeOut().hide();
+  $('#controlls').fadeOut().hide();
   $('#welcome #status').html('Game Over!!!');
   $('#welcome').show();
     
@@ -377,6 +402,7 @@ window.onload = function(){
     resetPlayers();
     $('#welcome').hide();
     $('#playground').show();
+    $('#controlls').show();
     preloadSprites(sprites.preloads);
     load();
   })
@@ -451,6 +477,33 @@ var init = function(){
         break;
     }
   }
+
+  $('#controlls #up').mousedown(function(e){
+    player1.move = 'up';
+    e.preventDefault();
+  });
+  $('#controlls #down').mousedown(function(e){
+    player1.move = 'down';
+    e.preventDefault();
+  });
+  $('#controlls #shoot').mousedown(function(e){
+    e.preventDefault();
+    player1.shootem();
+  });
+
+  $('#controlls #up').mouseup(function(e){
+    player1.move = null;
+    e.preventDefault();
+  });
+  $('#controlls #down').mouseup(function(e){
+    player1.move = null;
+    e.preventDefault();
+  });
+  $('#controlls #shoot').mouseup(function(e){
+    e.preventDefault();
+  });
+
+
   run();
 }
 
@@ -469,7 +522,8 @@ var run = function(){
         //console.log(enemies.enemy[i]);
         if((enemies.enemy[i].pos.left < ($(level.playground).offset().left + 30)) && enemies.enemy[i].live){
           //missiles[i].destroy();
-          $("#"+enemies.enemy[i].id).remove();
+          //$("#"+enemies.enemy[i].id).remove();
+          $(enemies.enemy[i].enemy).remove();
           //delete enemies.enemy[i];
           item_remove(enemies.enemy, i, 1)
           enemies.onscreen--;
@@ -477,13 +531,13 @@ var run = function(){
 
         }
         else if(
-          (enemies.enemy[i].pos.left < ($('#player').offset().left + $('#player').width())) &&
+          (enemies.enemy[i].pos.left < ($(player1.player).offset().left + $(player1.player).width())) &&
           (
-            //(enemies.enemy[i].pos.top + 20) > $('#player').offset().top - 36 &&
-            //(enemies.enemy[i].pos.top + 20) < $('#player').offset().top + 40
+            //(enemies.enemy[i].pos.top + 20) > $(player1.player).offset().top - 36 &&
+            //(enemies.enemy[i].pos.top + 20) < $(player1.player).offset().top + 40
             Math.abs(
               (enemies.enemy[i].pos.top + ($('.enemy_ship').height())/2) -
-              ($('#player').offset().top + ($('#player').height())/2)
+              ($(player1.player).offset().top + ($(player1.player).height())/2)
               )
             < 36
             )
@@ -515,7 +569,10 @@ var run = function(){
     for(i in missiles){
       if(missiles[i] != undefined){
         if(missiles[i].pos.left > ($(level.playground).offset().left + $(level.playground).width()-30)){
-          console.log($("#"+missiles[i].id).hide().remove());          
+          //console.log($("#"+missiles[i].id).hide().remove());
+          //$("#"+missiles[i].id).remove();
+          //$(missiles[i].missile).remove();
+          missiles[i].remove();
           item_remove(missiles, i, 1);
         }
         else{
@@ -541,7 +598,9 @@ var run = function(){
                 enemies.onscreen--;
               }, 500);
               //Remove Missile
-              $("#"+missiles[i].id).remove();
+              //$("#"+missiles[i].id).remove();
+              //$(missiles[i].missile).remove();
+              missiles[i].remove();
               item_remove(missiles, i, 1);
               item_remove(enemies.enemy, j, 1);
               

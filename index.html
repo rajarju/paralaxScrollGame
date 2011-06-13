@@ -142,6 +142,41 @@
 
         cursor: pointer;
       }
+      #controlls{
+        display: none;
+        background: red;
+        display: block;
+        width: 500px;
+        margin: 0 auto;
+        padding: 2px;
+      }
+      .clear{clear: both;}
+      #controlls #up{
+        height: 40px;
+        width: 40px;
+        display: block;
+        background: blue;
+        margin: 4px;
+      }
+      #controlls #left{float:left;}
+      #controlls #shoot{
+        float: left;
+      }
+      #controlls #down{
+        height: 40px;
+        width: 40px;
+        display: block;
+        background: yellow;
+        margin: 4px;
+      }
+
+      #controlls #shoot{
+        height: 40px;
+        width: 40px;
+        float: right;
+        background: white;
+        margin: 25px 4px 4px;
+      }
     </style>
     <script src='jquery.js' type='text/javascript'></script>
     <script src='parralaxScroll.js' type='text/javascript'></script>
@@ -167,7 +202,17 @@
         <div id="dist">Distance :<span>0</span></div>
         <div id="score">Score :<span>0</span></div>
       </div>
-    </div>    
+      <div id="controlls">
+        <div id="left">
+          <div id="up"></div>
+          <div id="down"></div>
+        </div>
+        <div id="shoot"></div>
+        <div class="clear"></div>
+      </div>
+
+    </div>
+
     <div id="buffer"> </div>
 
   </body>
